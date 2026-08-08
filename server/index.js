@@ -76,7 +76,9 @@ app.post('/api/categories', requireAdmin, async (req, res) => {
     res.json(c);
   }catch(e){ console.error(e); res.status(500).json({error:'server error'}) }
 });
+const path = require('path') const clientDist = path.join(__dirname, '..', 'client', 'dist')
 
+// Serve client in production if (process.env.NODE_ENV === 'production') { app.use(express.static(clientDist)) app.get('*', (req, res) => { res.sendFile(path.join(clientDist, 'index.html')) }) }
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
