@@ -3,7 +3,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const shortid = require('shortid');
 const db = require('./db');
 
 const app = express();
@@ -13,34 +12,32 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-me';
 app.use(cors());
 app.use(bodyParser.json());
 
-// Helper functions
-function run(stmt, params=[]) {
-  return db.prepare(stmt).run(...params);
-}
-function get(stmt, params=[]) {
-  return db.prepare(stmt).get(...params);
-}
-function all(stmt, params=[]) {
-  return db.prepare(stmt).all(...params);
-}
+// Initialize DB
+(async ()=>{
+  await db.init();
+})();
 
 // Public API
-app.get('/api/videos', (req, res) => {
-  const rows = all('SELECT * FROM videos ORDER BY createdAt DESC');
-  const videos = rows.map(r => ({ ...r, categories: r.categories ? JSON.parse(r.categories) : [] }));
-  res.json(videos);
+app.get('/api/videos', async (req, res) => {
+  try{
+    const videos = await db.getAllVideos();
+    res.json(videos);
+  }catch(e){ console.error(e); res.status(500).json({error:'server error'}) }
 });
 
-app.get('/api/videos/:id', (req, res) => {
-  const row = get('SELECT * FROM videos WHERE id = ?', [req.params.id]);
-  if (!row) return res.status(404).json({ error: 'Not found' });
-  row.categories = row.categories ? JSON.parse(row.categories) : [];
-  res.json(row);
+app.get('/api/videos/:id', async (req, res) => {
+  try{
+    const row = await db.getVideo(req.params.id);
+    if(!row) return res.status(404).json({ error: 'Not found' });
+    res.json(row);
+  }catch(e){ console.error(e); res.status(500).json({error:'server error'}) }
 });
 
-app.get('/api/categories', (req, res) => {
-  const rows = all('SELECT * FROM categories ORDER BY name');
-  res.json(rows);
+app.get('/api/categories', async (req, res) => {
+  try{
+    const cats = await db.getAllCategories();
+    res.json(cats);
+  }catch(e){ console.error(e); res.status(500).json({error:'server error'}) }
 });
 
 // Admin middleware (simple header-based)
@@ -51,42 +48,33 @@ function requireAdmin(req, res, next) {
 }
 
 // Admin endpoints
-app.post('/api/videos', requireAdmin, (req, res) => {
-  const { title, description, youtubeUrl, thumbnailUrl, wowheadId, categories } = req.body;
-  const id = shortid.generate();
-  const createdAt = new Date().toISOString();
-  const cats = Array.isArray(categories) ? JSON.stringify(categories) : JSON.stringify([]);
-  run('INSERT INTO videos (id,title,description,youtubeUrl,thumbnailUrl,wowheadId,categories,createdAt) VALUES (?,?,?,?,?,?,?,?)',
-    [id, title, description||'', youtubeUrl, thumbnailUrl||'', wowheadId||'', cats, createdAt]);
-  const video = get('SELECT * FROM videos WHERE id = ?', [id]);
-  video.categories = JSON.parse(video.categories);
-  res.json(video);
+app.post('/api/videos', requireAdmin, async (req, res) => {
+  try{
+    const video = await db.createVideo(req.body);
+    res.json(video);
+  }catch(e){ console.error(e); res.status(500).json({error:'server error'}) }
 });
 
-app.put('/api/videos/:id', requireAdmin, (req, res) => {
-  const id = req.params.id;
-  const { title, description, youtubeUrl, thumbnailUrl, wowheadId, categories } = req.body;
-  const cats = Array.isArray(categories) ? JSON.stringify(categories) : JSON.stringify([]);
-  run('UPDATE videos SET title=?,description=?,youtubeUrl=?,thumbnailUrl=?,wowheadId=?,categories=? WHERE id=?',
-    [title, description||'', youtubeUrl, thumbnailUrl||'', wowheadId||'', cats, id]);
-  const video = get('SELECT * FROM videos WHERE id = ?', [id]);
-  if (!video) return res.status(404).json({ error: 'Not found' });
-  video.categories = JSON.parse(video.categories);
-  res.json(video);
+app.put('/api/videos/:id', requireAdmin, async (req, res) => {
+  try{
+    const updated = await db.updateVideo(req.params.id, req.body);
+    if(!updated) return res.status(404).json({ error: 'Not found' });
+    res.json(updated);
+  }catch(e){ console.error(e); res.status(500).json({error:'server error'}) }
 });
 
-app.delete('/api/videos/:id', requireAdmin, (req, res) => {
-  const id = req.params.id;
-  run('DELETE FROM videos WHERE id = ?', [id]);
-  res.json({ success: true });
+app.delete('/api/videos/:id', requireAdmin, async (req, res) => {
+  try{
+    await db.deleteVideo(req.params.id);
+    res.json({ success: true });
+  }catch(e){ console.error(e); res.status(500).json({error:'server error'}) }
 });
 
-app.post('/api/categories', requireAdmin, (req, res) => {
-  const { name, slug, description } = req.body;
-  const id = shortid.generate();
-  run('INSERT INTO categories (id,name,slug,description) VALUES (?,?,?,?)', [id, name, slug, description||'']);
-  const c = get('SELECT * FROM categories WHERE id = ?', [id]);
-  res.json(c);
+app.post('/api/categories', requireAdmin, async (req, res) => {
+  try{
+    const c = await db.createCategory(req.body);
+    res.json(c);
+  }catch(e){ console.error(e); res.status(500).json({error:'server error'}) }
 });
 
 app.listen(PORT, () => {
