@@ -1,4 +1,28 @@
 {
-  "videos": [],
-  "categories": []
+  "videos": [
+    {
+      "id": "FS0qkn2OH",
+      "title": "f",
+      "description": "f",
+      "youtubeUrl": "f",
+      "thumbnailUrl": "",
+      "wowheadId": "f",
+      "categories": [],
+      "createdAt": "2026-08-08T10:44:43.746Z"
+    },
+    {
+      "id": "E04zMw8KZ",
+      "title": "Shaman arena guide",
+      "description": "This video showcases a guide for enhancement shaman in season 1 midnight.",
+      "youtubeUrl": "https://www.youtube.com/watch?v=mOGm8jyhN28&t=533s",
+      "thumbnailUrl": "",
+      "wowheadId": "",
+      "categories": [
+        "PvP"
+      ],
+      "createdAt": "2026-08-08T10:49:03.267Z"
+    }
+  ],
+  "categories": [],
+  "comics": []
 }
