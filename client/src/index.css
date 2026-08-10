@@ -1,242 +1,33 @@
-/**
- * Main stylesheet for the client app
- */
-:root{
-  --gap: 16px;
-  --card-bg: #fff;
-  --muted: #666;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;background:#f5f7fb;color:#111}
-.site-header{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#0b3d91;color:#fff}
-.container{padding:24px;max-width:1200px;margin:0 auto}
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--gap)}
-.card{background:var(--card-bg);border-radius:8px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.08)}
-.card h3{margin:6px 0 8px}
-.card p{color:var(--muted);font-size:14px}
+/* Dark blue page and comic layout */
+body{background:#031428;color:#fff}
+.app{min-height:100vh;display:flex;flex-direction:column}
 
-/* Video page layout: video + info panel */
-.video-layout{display:flex;gap:20px;align-items:flex-start}
-.player{flex:1;min-width:300px}
-.info{width:340px;background:#fff;padding:12px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,0.06)}
-.info h2{margin-top:0}
-.meta{font-size:14px;color:var(--muted);margin-bottom:12px}
-
-/* Responsive: move info under player on small screens */
-@media (max-width:900px){
-  .video-layout{flex-direction:column}
-  .info{width:100%}
-}
-
-/* Admin button */
-.admin-toggle{background:transparent;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:6px 10px;border-radius:6px;cursor:pointer}
-.admin-panel{position:fixed;top:70px;right:20px;background:#fff;padding:12px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.12);width:320px;max-height:80vh;overflow:auto}
-.form-row{margin-bottom:8px}
-.form-row label{display:block;font-size:13px;margin-bottom:4px}
-.form-row input,.form-row textarea{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px}
-
-/* link */
-a { color: #0b3d91; text-decoration: none; }
-a:hover { text-decoration: underline; }
-
-/* Header / Search styles (add near top or at end of file) */
-
-.site-title {
-  margin: 0;
-  font-size: 20px;
-  letter-spacing: 0.5px;
-}
-
-/* Centered search container below header */
-.global-search-container {
-  display: flex;
-  justify-content: center;
-  padding: 24px 12px;
-  background: linear-gradient(180deg, rgba(11,61,145,0.03), transparent);
-}
-
-/* search form layout */
-.search-form {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  width: 100%;
-  max-width: 920px;
-  padding: 12px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(11,61,145,0.06);
-}
-
-/* input */
-.search-input {
-  flex: 1;
-  padding: 10px 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 16px;
-}
-
-/* category dropdown wrapper */
-.category-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-/* category button */
-.category-toggle {
-  background: #f3f6fb;
-  border: 1px solid #e2e8f0;
-  padding: 8px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-/* dropdown list */
-.dropdown-list {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  background: #fff;
-  border: 1px solid #e6edf6;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(11,61,145,0.08);
-  list-style: none;
-  padding: 6px;
-  margin: 0;
-  min-width: 180px;
-  z-index: 40;
-}
-
-/* dropdown items */
-.dropdown-item {
-  padding: 8px 10px;
-  cursor: pointer;
-  border-radius: 6px;
-  font-size: 14px;
-}
-.dropdown-item:hover {
-  background: #f3f6fb;
-}
-
-/* search submit button */
-.search-submit {
-  background: #0b3d91;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-/* Hero header using user-supplied image */
-.hero-header {
-  position: relative;
-  background-image: url('/header.jpg'); /* place image at client/public/header.jpg */
-  background-size: cover;
-  background-position: left center; /* keep character left-anchored */
-  color: #fff;
-  min-height: 320px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 14px 24px;
-  overflow: hidden;
-}
-
-/* dark / ember overlay to make text readable */
-.hero-header::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(8,8,8,0.65) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.25) 100%);
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-
-/* top row holds brand and admin button */
-.hero-top {
-  position: relative;
+/* Hero header centered at top, minimal height so comic fits fully */
+.hero-header{
+  background:linear-gradient(180deg,#021827,#031a2d);
+  color:#fff;
+  padding:10px 12px;
   display:flex;
-  justify-content:space-between;
+  flex-direction:column;
   align-items:center;
-  z-index: 2; /* above overlay */
-  width: 100%;
+  justify-content:flex-start;
 }
+.hero-top{width:100%;display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto}
+.hero-brand{font-family:'Cinzel',serif;font-weight:700;font-size:14px;color:#cfe8ff}
+.hero-eyebrow{font-size:14px;color:#cfe8ff;margin:8px 0 0}
+.hero-title{font-size:56px;font-weight:900;letter-spacing:2px;color:#fff;margin:6px 0 10px}
 
-/* Brand / logo text */
-.hero-brand-link { text-decoration: none; color: inherit; }
-.hero-brand {
-  font-family: 'Cinzel', serif; /* will fall back to serif if font not present */
-  font-weight: 800;
-  font-size: 26px;
-  color: #f0b04a;
-  text-shadow:
-    0 2px 0 rgba(0,0,0,0.6),
-    0 6px 16px rgba(200,80,0,0.25);
-  letter-spacing: 1px;
-  margin-left: 6px;
-}
+/* Centered search */
+.global-search-container{background:transparent}
 
-/* content block with main hero text */
-.hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 820px;
-  margin-left: 36px;
-  margin-top: 12px;
-}
+/* Comic viewer */
+.comic-page-root{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:12px 0}
+.comic-frame{position:relative;max-width:1000px;width:100%;display:flex;align-items:center;justify-content:center}
+.comic-image{max-height:calc(100vh - 160px);width:auto;max-width:100%;display:block;border-radius:4px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+.placeholder{width:100%;height:60vh;display:flex;align-items:center;justify-content:center;font-size:28px;color:#8fb2cf}
 
-/* small eyebrow line */
-.hero-eyebrow {
-  margin: 0;
-  color: #f5a63f;
-  font-weight: 700;
-  font-size: 20px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.6);
-  transform: translateY(-4px);
-}
+.nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(3,26,40,0.6);border:none;color:#fff;padding:12px 14px;border-radius:6px;cursor:pointer}
+.prev{left:8px}
+.next{right:8px}
 
-/* main hero title with gold-orange gradient and glow */
-.hero-title {
-  margin: 6px 0 0;
-  font-size: 40px;
-  line-height: 1.05;
-  font-weight: 900;
-  color: #f3b253;
-  /* gradient text fallback: use background-clip if supported */
-  background: linear-gradient(180deg, #f6bf5a 0%, #c66c18 70%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow:
-    0 2px 0 rgba(0,0,0,0.6),
-    0 8px 30px rgba(200,80,0,0.25);
-}
-
-/* subtitle with cooler teal tint under the main title */
-.hero-sub {
-  margin: 8px 0 0 0;
-  color: #dbeff0;
-  font-size: 16px;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-  border-top: 1px solid rgba(255,255,255,0.06);
-  padding-top: 8px;
-  max-width: 520px;
-}
-
-/* ensure admin toggle sits above overlay */
-.admin-toggle {
-  z-index: 3;
-}
-
-/* Responsive adjustments */
-@media (max-width: 900px) {
-  .hero-header { min-height: 240px; padding: 10px; }
-  .hero-title { font-size: 28px; }
-  .hero-eyebrow { font-size: 16px; }
-  .hero-content { margin-left: 16px; margin-top: 6px; }
-  .hero-brand { font-size: 20px; }
-}
+@media(max-width:800px){.hero-title{font-size:32px}.comic-image{max-height:calc(100vh - 200px)}}

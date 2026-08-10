@@ -9,7 +9,7 @@ async function readData() {
     const txt = await fs.readFile(DB_FILE, 'utf8')
     return JSON.parse(txt)
   } catch (err) {
-    if (err.code === 'ENOENT') return { videos: [], categories: [] }
+    if (err.code === 'ENOENT') return { videos: [], categories: [], comics: [] }
     throw err
   }
 }
@@ -24,6 +24,7 @@ async function init() {
   const data = await readData()
   if (!data.videos) data.videos = []
   if (!data.categories) data.categories = []
+  if (!data.comics) data.comics = []
   await writeData(data)
 }
 
@@ -84,15 +85,46 @@ async function deleteVideo(id) {
   return changed
 }
 
+// Comics
+async function getAllComics() {
+  const data = await readData()
+  // newest first
+  return (data.comics || []).slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+}
+
+async function getComic(id) {
+  const data = await readData()
+  return (data.comics || []).find(c => c.id === id) || null
+}
+
+async function createComic({ title, filename }) {
+  const data = await readData()
+  const id = shortid.generate()
+  const createdAt = new Date().toISOString()
+  const comic = { id, title: title || '', filename, createdAt }
+  data.comics.push(comic)
+  await writeData(data)
+  return comic
+}
+
+async function deleteComic(id) {
+  const data = await readData()
+  const before = data.comics.length
+  data.comics = (data.comics || []).filter(c => c.id !== id)
+  const changed = data.comics.length !== before
+  if (changed) await writeData(data)
+  return changed
+}
+
 async function getAllCategories() {
   const data = await readData()
   return data.categories || []
 }
-
-async function createCategory({ name, slug, description }) {
+async function createCategory({ name, slug, description }){
+  await init()
   const data = await readData()
   const id = shortid.generate()
-  const c = { id, name, slug, description: description || '' }
+  const c = { id, name, slug, description: description||'' }
   data.categories.push(c)
   await writeData(data)
   return c
@@ -106,5 +138,10 @@ module.exports = {
   updateVideo,
   deleteVideo,
   getAllCategories,
-  createCategory
+  createCategory,
+  // comics
+  getAllComics,
+  getComic,
+  createComic,
+  deleteComic
 }

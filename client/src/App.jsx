@@ -2,6 +2,7 @@ import React from 'react'
 import { Outlet, Link } from 'react-router-dom'
 import AdminPanel from './components/AdminPanel'
 import HeaderSearch from './components/HeaderSearch'
+import Comics from './components/Comics'
 
 export default function App() {
   return (
@@ -9,15 +10,14 @@ export default function App() {
       <header className="hero-header" role="banner" aria-label="Site header">
         <div className="hero-top">
           <Link to="/" className="hero-brand-link" aria-label="Home">
-            <span className="hero-brand">Chadaver TV</span>
+            <span className="hero-brand">The Adventures of:</span>
           </Link>
           <AdminPanel />
         </div>
 
-        <div className="hero-content">
-          <h2 className="hero-eyebrow">Weekly WoW Content</h2>
-          <h1 className="hero-title">PvP + PvE Uploads</h1>
-          <p className="hero-sub">New Videos Every Week</p>
+        <div className="hero-content" style={{textAlign:'center',width:'100%'}}>
+          <div className="hero-eyebrow">The Adventures of:</div>
+          <div className="hero-title">CHAD</div>
         </div>
       </header>
 
@@ -25,9 +25,9 @@ export default function App() {
       <HeaderSearch />
 
       <main className="container">
-        <Outlet />
+        <Comics />
       </main>
-      <footer className="site-footer">© Chadaver Wow Guides</footer>
+      <footer className="site-footer" style={{textAlign:'center',padding:'18px 0'}}>© Chadaver Webcomics</footer>
     </div>
   )
 }
