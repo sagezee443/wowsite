@@ -6,7 +6,6 @@ export default function AdminPanel() {
   const [title, setTitle] = useState('')
   const [youtubeUrl, setYoutubeUrl] = useState('')
   const [description, setDescription] = useState('')
-  const [wowheadId, setWowheadId] = useState('')
   const [categories, setCategories] = useState('')
   const [message, setMessage] = useState('')
 
@@ -28,7 +27,6 @@ export default function AdminPanel() {
         title,
         description,
         youtubeUrl,
-        wowheadId,
         categories: categories ? categories.split(',').map(s => s.trim()).filter(Boolean) : []
       }
       const res = await fetch('/api/videos', {
@@ -49,7 +47,6 @@ export default function AdminPanel() {
       setTitle('')
       setYoutubeUrl('')
       setDescription('')
-      setWowheadId('')
       setCategories('')
     } catch (err) {
       console.error(err)
@@ -122,16 +119,6 @@ export default function AdminPanel() {
               </div>
 
               <div className="form-row">
-                <label htmlFor="video-wowhead">Wowhead ID</label>
-                <input
-                  id="video-wowhead"
-                  value={wowheadId}
-                  onChange={(e) => setWowheadId(e.target.value)}
-                  placeholder="Numeric wowhead ID (optional)"
-                />
-              </div>
-
-              <div className="form-row">
                 <label htmlFor="video-categories">Categories (comma separated)</label>
                 <input
                   id="video-categories"
@@ -143,7 +130,7 @@ export default function AdminPanel() {
 
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
                 <button type="submit" className="search-submit">Create video</button>
-                <button type="button" onClick={() => { setTitle(''); setYoutubeUrl(''); setDescription(''); setWowheadId(''); setCategories(''); }} style={{ padding: '8px 10px' }}>Clear</button>
+                <button type="button" onClick={() => { setTitle(''); setYoutubeUrl(''); setDescription(''); setCategories(''); }} style={{ padding: '8px 10px' }}>Clear</button>
                 {message && <div style={{ marginLeft: 8 }}>{message}</div>}
               </div>
             </fieldset>

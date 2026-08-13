@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 const comicsDir = path.join(__dirname, 'public', 'comics');
 fs.mkdirSync(comicsDir, { recursive: true });
 
-// Serve public static files (including /upload)
+// Serve public static files (including /admin)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Also serve comics at /comics
@@ -80,9 +80,13 @@ app.post('/api/comics', upload.single('file'), requireAdmin, async (req, res) =>
   } catch (e) { console.error(e); res.status(500).json({ error: 'server error' }) }
 })
 
-// Simple route to serve upload UI (upload.html is in server/public)
+// Serve admin UI at /admin (renamed from /upload)
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'))
+})
+// keep /upload working but redirect to /admin
 app.get('/upload', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'upload.html'))
+  res.redirect('/admin')
 })
 
 // Serve client in production
