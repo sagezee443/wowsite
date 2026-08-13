@@ -8,7 +8,7 @@ const multer = require('multer');
 const db = require('./db');
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5173; // serve on same port as Vite dev server by default
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-me';
 
 app.use(cors());
@@ -89,15 +89,33 @@ app.get('/upload', (req, res) => {
   res.redirect('/admin')
 })
 
-// Serve client in production
-const clientDist = path.join(__dirname, '..', 'client', 'dist');
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(clientDist))
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(clientDist, 'index.html'))
+// Start server and attach Vite dev middleware in development so client + API share the same port
+async function start() {
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      // dynamically require vite so it's only a dev dependency
+      const { createServer: createViteServer } = require('vite')
+      const vite = await createViteServer({
+        server: { middlewareMode: 'html' },
+        appType: 'custom'
+      })
+      app.use(vite.middlewares)
+      console.log('Vite middleware attached (development)')
+    } catch (e) {
+      console.warn('Vite dev middleware not available. Run the client dev server separately if needed.', e.message || e)
+    }
+  } else {
+    // In production serve built client
+    const clientDist = path.join(__dirname, '..', 'client', 'dist')
+    app.use(express.static(clientDist))
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(clientDist, 'index.html'))
+    })
+  }
+
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`)
   })
 }
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`)
-})
+start()
